@@ -1,5 +1,6 @@
 // we want to turn strings of nodes ("a -- b -- c + d -- e -- f") into a list of Tokens.
 
+#[derive(PartialEq)]
 pub enum Token {
     Ident(String), //identifier; these are our graph nodes
     DoubleDash,
