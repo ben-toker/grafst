@@ -160,3 +160,25 @@ join_op     ::= '+>'                          // horizontal join (right's [left]
 - **Layout options** — circle, bipartite layouts alongside force-directed
 - **Highlighting** — visually distinguish a subgraph within a larger graph
 - **LaTeX integration** — `graphtex.sty` package with `\graphtex{}` macro
+
+---
+
+### Reach goal: subgraphs overlaid on backdrop graphs
+
+The general problem: render a distinguished subgraph against the full graph it lives in. Two edge sets on a shared vertex set, drawn distinctly. Instances include Hamiltonian paths on a lattice section, minimum spanning trees on a weighted graph, perfect matchings on a bipartite graph, cycles or cuts picked out of a planar graph.
+
+The interesting content is the author's choice of subgraph; the backdrop is context. Auto-solving defeats the purpose — the author supplies the subgraph and the tool renders it legibly over the backdrop.
+
+Gated on everything above working: M1–M5, layout/TikZ pipeline, and `style.rs` threaded through emission. Until then this can't be prototyped meaningfully.
+
+Three pieces, in dependency order:
+
+1. **Overlay composition operator.** A non-merging "same vertex set, union the edges, keep the two sources labeled" primitive. Neither `+` (disjoint) nor `+>`/`+v` (merge-based) fit — overlay is the missing third composition shape and the load-bearing piece of this goal.
+
+2. **Style hookup for overlay layers.** With overlay producing two labeled edge sets, `style.rs` maps the labels to visual attributes (faint backdrop vs. bold subgraph). Can't be done in `style.rs` alone — without the structural distinction from overlay, there is nothing for styling to latch onto.
+
+3. **Backdrop primitives that suit common problems.** E.g. `L(m,n)` as a named-graph family for lattice sections (parallels `K_{m,n}`, lives in eval — can't be built from `+v` compositions since merge semantics collapse rows). Other problem classes may want weighted graphs, planar embeddings, or bipartite-with-explicit-sides. Added as needed, not upfront.
+
+Authors identify backdrop vertices via the existing auto-generated ID philosophy: render the backdrop, read off the IDs, write the subgraph as an edge list against those names.
+
+Open questions deferred until prerequisites land: overlay operator symbol, ID schemes for new backdrop families, and whether overlay styling is a single `highlight` flag or full attribute syntax.
