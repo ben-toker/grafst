@@ -1,5 +1,6 @@
 // defines how tokens *can* be grouped together.
 
-enum Expr {
+#[derive(Debug, PartialEq)]
+pub enum Expr {
     EdgeList(Vec<String>),
 }
