@@ -1,6 +1,8 @@
 mod graph;
+mod layout;
 mod parser;
 mod style;
+mod tikz;
 
 use std::collections::HashMap;
 
@@ -38,12 +40,7 @@ fn main() {
     let input = std::env::args().nth(1).expect("usage: grafst '<expr>'");
 
     let expr = parser::parse(&input).expect("parse error");
-    let graph = eval(expr);
-
-    for (i, node) in graph.nodes.iter().enumerate() {
-        println!("node {}: {}", i, node.label);
-    }
-    for edge in &graph.edges {
-        println!("edge: {} -- {}", edge.from, edge.to);
-    }
+    let mut graph = eval(expr);
+    layout::layout(&mut graph);
+    print!("{}", tikz::emit(&graph));
 }
